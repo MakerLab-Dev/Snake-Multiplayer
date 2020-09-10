@@ -118,6 +118,12 @@ function gameLoop(state) {
     playerTwo.snake.pop();
   }
 
+  if (playerOne.pos.x === playerTwo.pos.x && playerOne.pos.y === playerTwo.pos.y) {
+    if (playerOne.vel.x === playerTwo.vel.x*-1 || playerOne.vel.y === playerTwo.vel.y*-1) {
+      return 3;
+    }
+  }
+
   for (let cell of playerOne.snake) {
     if (cell.x === playerTwo.pos.x && cell.y === playerTwo.pos.y) {
       return 1;
@@ -137,6 +143,12 @@ function randomFood(state) {
   food = {
     x: Math.floor(Math.random() * GRID_SIZE),
     y: Math.floor(Math.random() * GRID_SIZE),
+  }
+
+  for (let cell of state.food) {
+    if (cell.x === food.x && cell.y === food.y) {
+      return randomFood(state);
+    }
   }
 
   for (let cell of state.players[0].snake) {

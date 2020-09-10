@@ -44,6 +44,7 @@ io.on('connection', client => {
 
   function handleNewGame() {
     let roomName = makeid(5);
+    // TODO: Check if that room already exists to avoid unexpected behaviour
     clientRooms[client.id] = roomName;
     client.emit('gameCode', roomName);
 
