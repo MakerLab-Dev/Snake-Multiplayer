@@ -13,37 +13,43 @@ function initGame() {
 }
 
 function createGameState() {
+  player1Pos = {
+    x: Math.floor(Math.random() * (GRID_SIZE-6)+3),
+    y: Math.floor(Math.random() * (GRID_SIZE-6)+3),
+  }
+  player2Pos = {
+    x: Math.floor(Math.random() * (GRID_SIZE-6)+3),
+    y: Math.floor(Math.random() * (GRID_SIZE-6)+3),
+  }
   return {
     players: [{
       pos: {
-        x: 3,
-        y: 10,
+        x: player1Pos.x,
+        y: player1Pos.y,
       },
       vel: {
         x: 0,
         y: 0,
       },
       snake: [
-        {x: 1, y: 10},
-        {x: 2, y: 10},
-        {x: 3, y: 10},
+        {x: player1Pos.x, y: player1Pos.y},
+        {x: player1Pos.x, y: player1Pos.y+1},
       ],
     }, {
       pos: {
-        x: 18,
-        y: 10,
+        x: player2Pos.x,
+        y: player2Pos.y,
       },
       vel: {
         x: 0,
         y: 0,
       },
       snake: [
-        {x: 20, y: 10},
-        {x: 19, y: 10},
-        {x: 18, y: 10},
+        {x: player2Pos.x, y: player2Pos.y},
+        {x: player2Pos.x, y: player2Pos.y+1},
       ],
     }],
-    food: {},
+    food: [],
     gridsize: GRID_SIZE,
   };
 }
@@ -70,18 +76,24 @@ function gameLoop(state) {
     return 1;
   }
 
-  if (state.food.x === playerOne.pos.x && state.food.y === playerOne.pos.y) {
-    playerOne.snake.push({ ...playerOne.pos });
-    playerOne.pos.x += playerOne.vel.x;
-    playerOne.pos.y += playerOne.vel.y;
-    randomFood(state);
-  }
+  for (let food of state.food) {
+    if (food.x === playerOne.pos.x && food.y === playerOne.pos.y) {
+      playerOne.snake.push({ ...playerOne.snake[0] });
+      var index = state.food.indexOf(food);
+      if (index > -1) {
+        state.food.splice(index, 1);
+      }
+      randomFood(state);
+    }
 
-  if (state.food.x === playerTwo.pos.x && state.food.y === playerTwo.pos.y) {
-    playerTwo.snake.push({ ...playerTwo.pos });
-    playerTwo.pos.x += playerTwo.vel.x;
-    playerTwo.pos.y += playerTwo.vel.y;
-    randomFood(state);
+    if (food.x === playerTwo.pos.x && food.y === playerTwo.pos.y) {
+      playerTwo.snake.push({ ...playerTwo.snake[0] });
+      var index = state.food.indexOf(food);
+      if (index > -1) {
+        state.food.splice(index, 1);
+      }
+      randomFood(state);
+    }
   }
 
   if (playerOne.vel.x || playerOne.vel.y) {
@@ -91,8 +103,8 @@ function gameLoop(state) {
       }
     }
 
-    playerOne.snake.push({ ...playerOne.pos });
-    playerOne.snake.shift();
+    playerOne.snake.unshift({ ...playerOne.pos });
+    playerOne.snake.pop();
   }
 
   if (playerTwo.vel.x || playerTwo.vel.y) {
@@ -102,8 +114,20 @@ function gameLoop(state) {
       }
     }
 
-    playerTwo.snake.push({ ...playerTwo.pos });
-    playerTwo.snake.shift();
+    playerTwo.snake.unshift({ ...playerTwo.pos });
+    playerTwo.snake.pop();
+  }
+
+  for (let cell of playerOne.snake) {
+    if (cell.x === playerTwo.pos.x && cell.y === playerTwo.pos.y) {
+      return 1;
+    }
+  }
+
+  for (let cell of playerTwo.snake) {
+    if (cell.x === playerOne.pos.x && cell.y === playerOne.pos.y) {
+      return 2;
+    }
   }
 
   return false;
@@ -127,7 +151,7 @@ function randomFood(state) {
     }
   }
 
-  state.food = food;
+  state.food.push(food);
 }
 
 function getUpdatedVelocity(keyCode) {

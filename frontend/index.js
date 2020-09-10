@@ -30,6 +30,7 @@ function newGame() {
 function joinGame() {
   const code = gameCodeInput.value;
   socket.emit('joinGame', code);
+  gameCodeDisplay.innerText = code;
   init();
 }
 
@@ -70,17 +71,19 @@ function paintGame(state) {
     ctx.fillRect(element.x * size, element.y * size, size, size);
   });
 
-  paintPlayer(state.players[0], size, SNAKE_COLOUR);
-  paintPlayer(state.players[1], size, 'red');
+  paintPlayer(state.players[0], size, SNAKE_COLOUR, 'blue');
+  paintPlayer(state.players[1], size, 'red', 'orange');
 }
 
-function paintPlayer(playerState, size, colour) {
+function paintPlayer(playerState, size, colour, headColor) {
   const snake = playerState.snake;
 
   ctx.fillStyle = colour;
   for (let cell of snake) {
     ctx.fillRect(cell.x * size, cell.y * size, size, size);
   }
+  ctx.fillStyle = headColor;
+  ctx.fillRect(snake[0].x * size, snake[0].y * size, size, size);
 }
 
 function handleInit(number) {

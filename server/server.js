@@ -67,9 +67,14 @@ io.on('connection', client => {
     }
 
     const vel = getUpdatedVelocity(keyCode);
+    const player = (state[roomName]) ? state[roomName].players[client.number - 1] : null;
 
-    if (vel) {
-      state[roomName].players[client.number - 1].vel = vel;
+    if (vel && player) {
+      if (player.snake[1].x === player.pos.x+vel.x && player.snake[1].y === player.pos.y+vel.y) {
+        // Invalid movement
+      } else {
+        player.vel = vel;
+      }
     }
   }
 });
