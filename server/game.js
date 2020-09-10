@@ -119,7 +119,7 @@ function gameLoop(state) {
   }
 
   if (playerOne.pos.x === playerTwo.pos.x && playerOne.pos.y === playerTwo.pos.y) {
-    if (playerOne.vel.x === playerTwo.vel.x*-1 || playerOne.vel.y === playerTwo.vel.y*-1) {
+    if ((playerOne.vel.x === playerTwo.vel.x*-1) && (playerOne.vel.y === playerTwo.vel.y*-1)) {
       return 3;
     }
   }
